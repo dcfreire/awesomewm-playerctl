@@ -150,7 +150,7 @@ local function worker(args)
         widget:connect_signal('mouse::enter', function()
             playerctl_tooltip.markup = ((string.len(cur_album) > 0) and ('<b>Album</b>: ' .. cur_album .. "\n") or "")
                 .. ((string.len(cur_artist) > 0) and ('<b>Artist</b>: ' .. cur_artist .. "\n") or "")
-                .. ((string.len(cur_title) > 0) and ('<b>Song</b>: ' .. cur_title) or "")
+                .. ((string.len(cur_title) > 0) and ('<b>Title</b>: ' .. cur_title) or "")
         end)
     end
 
