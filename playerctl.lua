@@ -7,8 +7,10 @@ local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 
-
-
+local preferred_player = "spotify"
+local command = 'playerctl -p ' .. preferred_player .. ',%any '
+local GET_STATUS_CMD = command .. ' status'
+local GET_CURRENT_SONG_CMD = command .. ' metadata'
 
 local function ellipsize(text, length)
     return (text:len() > length and length > 0)
@@ -19,13 +21,7 @@ end
 local widget = {}
 
 local function worker(args)
-
     local args = args or {}
-
-    local player = args.player or "spotify"
-    local command = 'playerctl -p ' .. player .. ' '
-    local GET_STATUS_CMD = command .. ' status'
-    local GET_CURRENT_SONG_CMD = command ..' metadata'
 
     local play_icon = args.play_icon or os.getenv("HOME") .. '/.config/awesome/widgets/playerctl/player_play.png'
     local pause_icon = args.pause_icon or os.getenv("HOME") .. '/.config/awesome/widgets/playerctl/player_pause.png'
@@ -97,15 +93,16 @@ local function worker(args)
 
     local update_widget_text = function(widget, stdout, _, _, _)
         if string.len(stdout) == 0 then
-            widget:set_text('','')
+            widget:set_text('', '')
             widget:set_visible(false)
             return
         end
 
         local escaped = string.gsub(stdout, "&", '&amp;')
-        local album, _album_artist, artist, title =
-            string.match(escaped, 'spotify xesam:album%s*([^\n]*)\n.*spotify xesam:albumArtist%s*([^\n]*)\n.*spotify xesam:artist%s*([^\n]*)\n.*spotify xesam:title%s*([^\n]*)')
-        if album ~= nil and title ~=nil and artist ~= nil then
+        local title = string.match(escaped, "xesam:title *([^\n]*)")
+        local album = string.match(escaped, "xesam:album *([^\n]*)")
+        local artist = string.match(escaped, "xesam:artist *([^\n]*)")
+        if album ~= nil and title ~= nil and artist ~= nil then
             cur_artist = artist
             cur_title = title
             cur_album = album
@@ -125,13 +122,13 @@ local function worker(args)
     widget:connect_signal("button::press", function(_, _, _, button)
         print(button)
         if (button == 1) then
-            awful.spawn(command .. (status and "pause" or "play"), false)      -- left click
+            awful.spawn(command .. (status and "pause" or "play"), false) -- left click
         elseif (button == 4) then
-            awful.spawn(command .. "next", false)  -- scroll up
+            awful.spawn(command .. "next", false)                         -- scroll up
         elseif (button == 5) then
-            awful.spawn(command .. "prev", false)  -- scroll down
+            awful.spawn(command .. "prev", false)                         -- scroll down
         elseif (button == 2) then
-            awful.spawn("killall " .. player, false)  -- middle mouse
+            awful.spawn("killall " .. preferred_player, false)                      -- middle mouse
         end
         awful.spawn.easy_async(GET_CURRENT_SONG_CMD, function(stdout, stderr, exitreason, exitcode)
             update_widget_icon(widget, stdout, stderr, exitreason, exitcode)
@@ -142,26 +139,26 @@ local function worker(args)
     if show_tooltip then
         local playerctl_tooltip = awful.tooltip {
             mode = 'outside',
-            preferred_positions = {'bottom'},
+            preferred_positions = { 'bottom' },
             bg = args.bg or "#ffcb60",
             fg = args.fg or "#000000",
             font = font
-         }
+        }
 
         playerctl_tooltip:add_to_object(widget)
 
         widget:connect_signal('mouse::enter', function()
-            playerctl_tooltip.markup = '<b>Album</b>: ' .. cur_album
-                .. '\n<b>Artist</b>: ' .. cur_artist
-                .. '\n<b>Song</b>: ' .. cur_title
+            playerctl_tooltip.markup = ((string.len(cur_album) > 0) and ('<b>Album</b>: ' .. cur_album .. "\n") or "")
+                .. ((string.len(cur_artist) > 0) and ('<b>Artist</b>: ' .. cur_artist .. "\n") or "")
+                .. ((string.len(cur_title) > 0) and ('<b>Song</b>: ' .. cur_title) or "")
         end)
     end
 
     return widget
-
 end
 
-return setmetatable(widget, { __call = function(_, ...)
-    return worker(...)
-end
+return setmetatable(widget, {
+    __call = function(_, ...)
+        return worker(...)
+    end
 })
