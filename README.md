@@ -1,13 +1,13 @@
 # Playerctl widget for AweomseWM
 
-Widget to control whatever music player you're using with [playerctl](https://github.com/altdesktop/playerctl). Based on [this widget](https://github.com/streetturtle/awesome-wm-widgets/blob/master/spotify-widget/spotify.lua) by streetturtle.
+Widget to control whatever player you're using with [playerctl](https://github.com/altdesktop/playerctl). Based on [this widget](https://github.com/streetturtle/awesome-wm-widgets/blob/master/spotify-widget/spotify.lua) by streetturtle.
 
 ## Installation
 
 Clone this repo under `~/.config/awesome/widgets/`, then add it to your `theme.lua`.
 
 ```lua
-playerctl_widget{layer="player_name"} --Defaults to "spotify"
+playerctl_widget{preferred_layer="player_name"} --Defaults to "spotify"
 ```
 
 ## Customization
@@ -15,7 +15,7 @@ playerctl_widget{layer="player_name"} --Defaults to "spotify"
 It is possible to customize widget by providing a table with all or some of the following config parameters:
 | Name | Default | Description |
 |---|---|---|
-| `player` | `"spotify"` | Player |
+| `preferred_player` | `"spotify"` | Player |
 | `play_icon` | `"~/.config/awesome/widgets/playerctl/player_play.png"` | Play icon |
 | `pause_icon` | `"~/.config/awesome/widgets/playerctl/player_pause.png"` | Pause icon |
 | `font` | `"Play 9"`| Font |

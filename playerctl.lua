@@ -1,16 +1,18 @@
 -------------------------------------------------
 -- Playerctl Widget for Awesome Window Manager
 -- Requires playerctl
+-- To create the widget do:
+-- ```lua
+--  local playerctl_widget = require("widgets.playerctl.playerctl")
+--  playerctl_widget{args}
+-- ```
 -------------------------------------------------
 
 local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 
-local preferred_player = "spotify"
-local command = 'playerctl -p ' .. preferred_player .. ',%any '
-local GET_STATUS_CMD = command .. ' status'
-local GET_CURRENT_SONG_CMD = command .. ' metadata'
+
 
 local function ellipsize(text, length)
     return (text:len() > length and length > 0)
@@ -21,6 +23,12 @@ end
 local widget = {}
 
 local function worker(args)
+    local preferred_player = args.preferred_player or "spotify"
+    local command = 'playerctl -p ' .. preferred_player .. ',%any '
+    local GET_STATUS_CMD = command .. ' status'
+    local GET_CURRENT_SONG_CMD = command .. ' metadata'
+
+
     local args = args or {}
 
     local play_icon = args.play_icon or os.getenv("HOME") .. '/.config/awesome/widgets/playerctl/player_play.png'
