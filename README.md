@@ -9,7 +9,7 @@ Widget to control whatever player you're using with [playerctl](https://github.c
 Clone this repo under `~/.config/awesome/widgets/`, then add it to your `theme.lua`.
 
 ```lua
-playerctl_widget{preferred_layer="player_name"} --Defaults to "spotify"
+playerctl_widget{preferred_player="player_name"} --Defaults to "spotify"
 ```
 
 ## Customization
