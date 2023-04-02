@@ -13,13 +13,6 @@ local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 
 
-
-local function ellipsize(text, length)
-    return (text:len() > length and length > 0)
-        and text:sub(0, length - 3) .. '...'
-        or text
-end
-
 local widget = {}
 
 local function worker(args)
@@ -36,7 +29,6 @@ local function worker(args)
     local font = args.font or 'Play 9'
     local dim_when_paused = args.dim_when_paused == nil and false or args.dim_when_paused
     local dim_opacity = args.dim_opacity or 0.2
-    local max_length = args.max_length or 15
     local show_tooltip = args.show_tooltip == nil and true or args.show_tooltip
     local timeout = args.timeout or 1
 
@@ -47,9 +39,16 @@ local function worker(args)
 
     widget = wibox.widget {
         {
-            id = 'artistw',
-            font = font,
-            widget = wibox.widget.textbox,
+            layout = wibox.container.scroll.horizontal,
+            max_size = 100,
+            step_function = wibox.container.scroll.step_functions.increase,
+            speed = 10,
+            extra_space = 20,
+            {
+                id = 'artistw',
+                font = font,
+                widget = wibox.widget.textbox,
+            }
         },
         {
             id = "icon",
@@ -58,8 +57,9 @@ local function worker(args)
         {
             layout = wibox.container.scroll.horizontal,
             max_size = 100,
-            step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
-            speed = 40,
+            step_function = wibox.container.scroll.step_functions.increase,
+            speed = 10,
+            extra_space = 20,
             {
                 id = 'titlew',
                 font = font,
@@ -83,11 +83,11 @@ local function worker(args)
 
 
         set_text = function(self, artist, song)
-            local artist_to_display = ellipsize(artist, max_length)
+            local artist_to_display = artist
             if self:get_children_by_id('artistw')[1]:get_markup() ~= artist_to_display then
                 self:get_children_by_id('artistw')[1]:set_markup(artist_to_display)
             end
-            local title_to_display = ellipsize(song, max_length)
+            local title_to_display = song
             if self:get_children_by_id('titlew')[1]:get_markup() ~= title_to_display then
                 self:get_children_by_id('titlew')[1]:set_markup(title_to_display)
             end
