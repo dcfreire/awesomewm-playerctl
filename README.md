@@ -2,6 +2,8 @@
 
 Widget to control whatever player you're using with [playerctl](https://github.com/altdesktop/playerctl). Based on [this widget](https://github.com/streetturtle/awesome-wm-widgets/blob/master/spotify-widget/spotify.lua) by streetturtle.
 
+![](widget.gif)
+
 ## Installation
 
 Clone this repo under `~/.config/awesome/widgets/`, then add it to your `theme.lua`.
