@@ -134,7 +134,7 @@ local function worker(args)
         elseif (button == 4) then
             awful.spawn(command .. "next", false)                         -- scroll up
         elseif (button == 5) then
-            awful.spawn(command .. "prev", false)                         -- scroll down
+            awful.spawn(command .. "previous", false)                         -- scroll down
         elseif (button == 2) then
             awful.spawn("killall " .. preferred_player, false)                      -- middle mouse
         end
